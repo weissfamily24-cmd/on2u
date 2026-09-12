@@ -4,5 +4,13 @@ dist/
 *.log
 .env
 .env.*
+!.env.example
 ios/
 android/
+supabase/.temp/
+supabase/.branches/
+web/dist/
+web/node_modules/
+web/dev-dist/
+.DS_Store
+Thumbs.db
