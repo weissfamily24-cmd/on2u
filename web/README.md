@@ -1,27 +1,60 @@
-# ON2U Eats — Web v0.2
+# ON2U Eats — Web v0.3 (Vite + TypeScript + Supabase)
 
-Mobile-first Web-App (PWA). Läuft ohne Build: `index.html` auf einen beliebigen Static-Host legen (Netlify, Vercel, GitHub Pages, Cloudflare Pages) — fertig. Auf dem Handy „Zum Home-Bildschirm" → verhält sich wie eine App.
+Mobile-first Web-App (PWA). Auf dem Handy „Zum Home-Bildschirm" → verhält sich wie eine App. Läuft auf Smartphone, Tablet und Desktop.
+
+## Starten
+
+```powershell
+cd web
+npm install
+copy .env.example .env      # dann VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_APP_URL eintragen
+npm run dev                 # http://localhost:5173
+npm run build               # Typecheck + Produktions-Build nach dist/
+```
+
+Ohne Schlüssel in `.env` startet die App trotzdem und zeigt „Backend nicht verbunden." Woher die Werte kommen: `../docs/backend.md`.
+
+## Struktur
+
+```
+web/
+├── index.html            Vite-Einstieg
+├── public/               manifest, icon, sw.js, _redirects (Netlify)
+├── vercel.json           SPA-Rewrite (Vercel)
+└── src/
+    ├── main.ts           Start, Tab-Bar, Screen-Wechsel
+    ├── router.ts         /, /feed, /scan, /saved, /profile, /place/:id, /auth/callback
+    ├── config.ts         APP_NAME (einzige Stelle), APP_URL, Tags, Limits
+    ├── ui.ts             kleine DOM-Helfer, Icons, Toast
+    ├── lib/
+    │   ├── supabase.ts   Client aus VITE_-Variablen, backendConfigured
+    │   ├── api.ts        alle Zugriffe, exakt nach ../docs/schema-contract.md
+    │   ├── qr.ts         BarcodeDetector, Fallback jsQR, /scan?t=TOKEN
+    │   ├── qr-pdf.ts     QR-Karten als PDF (pdf-lib + qrcode)
+    │   └── storage.ts    Gespeichert, letzter Tab, wartender Token (localStorage)
+    ├── screens/          map, feed, place, scan, saved, profile, owner, auth
+    └── styles/           tokens.css (design/tokens.md), app.css
+```
+
+`../lib/data/freshness.ts` und `types.ts` werden per Import wiederverwendet (Labels, Preisformat). Ob ein Lokal grün ist, entscheidet die View `place_freshness` in der Datenbank, nicht der Client.
 
 ## Was drin ist
-- **Karte** — echte OpenStreetMap-Karte (Leaflet, eingebettet, kein API-Key), dunkel eingefärbt. Pins in Terrakotta pulsieren, wenn die Speisekarte in den letzten 7 Tagen bestätigt wurde; graue Pins sind ungeprüft. Suche, Filter-Chips, „Mein Standort" (Geolocation, sortiert nach Entfernung).
-- **Feed** — vertikaler Snap-Feed, Herz, Merken, Route (öffnet Google Maps Navigation).
-- **Lokal** — auf dem Handy Vollbild, auf Tablet/Desktop als Panel rechts über der Karte.
-- **Scan** — Kamera-Zugriff (echte QR-Erkennung folgt), Bewertung mit Herzen, **„Stimmen die Preise?"**, Tags, Video-Auswahl. Eine Bewertung verändert sofort den Frische-Status des Lokals.
-- **Gespeichert / Profil** — lokal auf dem Gerät (localStorage), Inhaber-Ansicht als Demo.
+
+- **Karte** — Leaflet/OSM, dunkel. Pins in Terrakotta pulsieren bei „Karte aktuell", graue Pins sind ungeprüft. Suche, Filter-Chips, Mein Standort.
+- **Feed** — vertikaler Snap-Feed aus dem Bucket `videos`, Herz, Merken, Route.
+- **Lokal** — Video-Hero, Bestätigungs-Block (grün/gelb aus `place_freshness`), Speisekarte mit Preisen und Fotos, Gäste-Videos, Mini-Karte.
+- **Scan** — Kamera + QR, Deep-Link `/scan?t=TOKEN`, Code eintippen. Anmeldung per Magic Link erst hier. Dann: Herzen → „Stimmen die Preise?" → Tags → optionales Video mit Fortschritt → `submit_review` → „Danke."
+- **Gespeichert** — lokal auf dem Gerät.
+- **Profil** — Gast / Mein Restaurant. Inhaber: Lokal anlegen (Pin auf der Karte setzen), Speisekarte tippen oder fotografieren, bestätigen, QR-Codes als PDF drucken, Inhaber-Video hochladen.
 
 ## Layout
+
 - < 768 px: Tab-Bar unten, ein Screen zur Zeit
 - ≥ 768 px: Navigations-Leiste links, Karte füllt den Rest, Lokal als Seiten-Panel
 - ≥ 1100 px: Lokal-Liste als Spalte links über der Karte
 
-## Bekannte Grenzen (v0.2)
-- QR wird noch nicht wirklich gelesen — Button „Demo: Code erkannt". Nächster Schritt: `BarcodeDetector` API + Fallback (jsQR).
-- Alle Daten sind Demo-Daten in `index.html` (`PLACES`). Backend (Supabase) folgt, Schema in `../CLAUDE.md`.
-- Videos werden ausgewählt, aber nicht hochgeladen.
-- Leaflet ist eingebettet (~150 KB), damit die Datei allein funktioniert. Für den Vite-Umbau: `npm i leaflet` und normal importieren.
+## Bekannte Grenzen (v0.3)
 
-## Nächste Schritte
-1. In Bamberg mit 3–5 Gastronomen und 10 Gästen testen (Fragen in `../docs/concept.md`)
-2. Echte QR-Erkennung
-3. Supabase: `place`, `menu_item`, `menu_confirmation`, `visit`, `review`
-4. Umbau auf Vite + TypeScript, Wiederverwendung von `../lib/data/freshness.ts`
+- Speisekarten-Foto wird nur gespeichert und angezeigt, nicht ausgelesen (keine OCR).
+- Videos können nicht gelöscht werden.
+- Eine Sprache (Deutsch). Kein Push, keine Reservierung, keine Kommentare (bewusst, Schritt 1).
