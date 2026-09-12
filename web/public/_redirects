@@ -1,0 +1,2 @@
+# Netlify: Single-Page-App, alle Pfade (z. B. /scan?t=…, /auth/callback) zur index.html
+/*  /index.html  200

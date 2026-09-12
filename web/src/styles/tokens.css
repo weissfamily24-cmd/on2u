@@ -1,0 +1,26 @@
+/* Design-Tokens aus design/tokens.md. Einzige Quelle für Farben, Schrift, Maße. */
+:root {
+  --bg: #0c0c0c;
+  --surface: #161412;
+  --surface-2: #1f1c19;
+  --line: #2a2622;
+  --text: #f0ece6;
+  --text-2: #b8b1a8;
+  --muted: #7d766e;
+  --accent: #c96a4a;       /* Terrakotta: nur Scan-Button, primäre CTA, Herzen, aktive Pins */
+  --accent-soft: #c4ad8e;  /* gedämpftes Gold: kursive Sätze, Warnungen */
+  --ok: #8fb08a;           /* nur „Karte aktuell" und „Besuch bestätigt" */
+  --water: #1e2a30;
+
+  --sans: 'Poppins', system-ui, sans-serif;
+  --serif: 'Lora', Georgia, serif;
+
+  --r: 14px;
+  --nav-h: 72px;
+  --rail-w: 88px;
+  --panel-w: 440px;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+}
+/* Die App ist bewusst immer dunkel, auch wenn der Host ein helles Theme setzt. */
+:root[data-theme="light"] { --bg: #0c0c0c; }
