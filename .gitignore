@@ -5,6 +5,7 @@ dist/
 .env
 .env.*
 !.env.example
+!web/.env.production
 ios/
 android/
 supabase/.temp/

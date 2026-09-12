@@ -1,0 +1,14 @@
+# Netlify baut nur die Web-App in web/, nicht das Expo-Skelett im Root.
+[build]
+  base    = "web"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# SPA: /scan?t=…, /auth/callback, /place/:id → index.html (zusätzlich zu web/public/_redirects)
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
