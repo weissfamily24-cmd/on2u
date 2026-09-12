@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "ON2U Eats",
+    "slug": "on2ueats",
+    "version": "0.1.0",
+    "scheme": "on2ueats",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0c0c0c",
+    "ios": { "supportsTablet": false, "bundleIdentifier": "de.on2u.eats" },
+    "android": { "package": "de.on2u.eats" },
+    "plugins": [
+      "expo-router",
+      ["expo-camera", { "cameraPermission": "ON2U Eats braucht die Kamera, um den QR-Code am Tisch zu scannen." }]
+    ],
+    "experiments": { "typedRoutes": true }
+  }
+}
